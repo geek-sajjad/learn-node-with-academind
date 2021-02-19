@@ -1,8 +1,25 @@
-const http = require('http');
+const express = require('express');
 
-const routes = require('./routes');
+const app = express();
 
-console.log(routes.someText);
-const server = http.createServer(routes.handler);
+app.use((req, res, next) => {
+    console.log('in the first middleware');
+    next();
+});
 
-server.listen(3000);
+app.use((req, res, next) => {
+    console.log('in the scound middleware');
+    next();
+})
+
+
+app.use('/users', (req, res, next) => {
+    res.send('list of users');
+});
+
+app.use('/', (req, res, next) => {
+    res.send('Welcome to website');
+});
+
+
+app.listen(3000);
