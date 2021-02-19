@@ -1,25 +1,21 @@
+const path = require('path');
+
 const express = require('express');
+const bodyParser = require('body-parser');
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 app.use((req, res, next) => {
-    console.log('in the first middleware');
-    next();
+    console.log(__dirname);
+    console.log(path.join(__dirname, 'views', '404.html'));
+    res.status(400).sendFile(path.join(__dirname, 'views', '404.html'));
 });
-
-app.use((req, res, next) => {
-    console.log('in the scound middleware');
-    next();
-})
-
-
-app.use('/users', (req, res, next) => {
-    res.send('list of users');
-});
-
-app.use('/', (req, res, next) => {
-    res.send('Welcome to website');
-});
-
 
 app.listen(3000);
