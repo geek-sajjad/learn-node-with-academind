@@ -1,19 +1,24 @@
 {
-  "name": "learn-node-with-academind",
-  "version": "1.0.0",
-  "description": "complete gude to node.js",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/geek-sajjad/learn-node-with-academind.git"
-  },
-  "author": "Sajad Sohrabi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/geek-sajjad/learn-node-with-academind/issues"
-  },
-  "homepage": "https://github.com/geek-sajjad/learn-node-with-academind#readme"
+    "name": "learn-node-with-academind",
+    "version": "1.0.0",
+    "description": "complete gude to node.js",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js",
+        "start-dev": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/geek-sajjad/learn-node-with-academind.git"
+    },
+    "author": "Sajad Sohrabi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/geek-sajjad/learn-node-with-academind/issues"
+    },
+    "homepage": "https://github.com/geek-sajjad/learn-node-with-academind#readme",
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
 }
