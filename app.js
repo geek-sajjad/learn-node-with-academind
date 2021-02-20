@@ -9,12 +9,11 @@ const shopRoutes = require('./routes/shop');
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use((req, res, next) => {
-    console.log(__dirname);
-    console.log(path.join(__dirname, 'views', '404.html'));
     res.status(400).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
