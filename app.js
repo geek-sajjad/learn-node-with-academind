@@ -18,7 +18,7 @@ app.use('/admin', admonData.router);
 app.use(shopRoutes);
 app.use((req, res, next) => {
     // res.status(400).sendFile(path.join(__dirname, 'views', '404.html'));
-    res.status(400).render('404', { docTitle: '404' });
+    res.status(400).render('404', { docTitle: '404', path: '' });
 });
 
 app.listen(3000);
