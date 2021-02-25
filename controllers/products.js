@@ -11,10 +11,20 @@ exports.postAddProduct = (req, res, next) => {
     res.redirect('/');
 };
 
-exports.getProducts = (req, res, next) => {
-    // res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));
-    Product.fetchAll((products) => {
-        res.render('shop/products-list', { docTitle: 'Shop', products: products, path: '/' });
-    });
+exports.getProduct = (req, res, next) => {
+    res.render('admin/products', { docTitle: 'Admin Products', path: '/admin/products' });
+};
 
+exports.index = (req, res, next) => {
+    res.render('shop/index', { docTitle: 'Shop', path: '/' });
+};
+
+exports.cart = (req, res, next) => {
+    res.render('shop/cart', { docTitle: 'Cart', path: '/cart' });
+};
+
+exports.getProducts = (req, res, next) => {
+    Product.fetchAll((products) => {
+        res.render('shop/products-list', { docTitle: 'Products', products: products, path: '/products' });
+    });
 };
