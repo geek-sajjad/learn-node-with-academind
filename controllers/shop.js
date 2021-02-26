@@ -2,7 +2,7 @@ const Product = require('../models/product');
 
 exports.getIndex = (req, res, next) => {
     Product.fetchAll((products) => {
-        res.render('shop/index', { docTitle: 'Shop', path: '/', products: products });
+        res.render('shop/index', { docTitle: 'Shop', path: '/', prods: products });
     });
 };
 
@@ -16,6 +16,6 @@ exports.getOrders = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll((products) => {
-        res.render('shop/products-list', { docTitle: 'Products', products: products, path: '/products' });
+        res.render('shop/product-list', { docTitle: 'Products', prods: products, path: '/products' });
     });
 };
