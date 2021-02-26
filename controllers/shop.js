@@ -10,6 +10,12 @@ exports.getCart = (req, res, next) => {
     res.render('shop/cart', { docTitle: 'Cart', path: '/cart' });
 };
 
+exports.postCart = (req, res, next) => {
+    const productId = req.body.productId;
+    console.log(productId);
+    res.redirect('/cart');
+};
+
 exports.getOrders = (req, res, next) => {
     res.render('shop/orders', { docTitle: 'Orders', path: '/orders' });
 };
@@ -17,5 +23,12 @@ exports.getOrders = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     Product.fetchAll((products) => {
         res.render('shop/product-list', { docTitle: 'Products', prods: products, path: '/products' });
+    });
+};
+
+exports.getProduct = (req, res, next) => {
+    const productId = req.params.productId;
+    Product.findById(productId, product => {
+        res.render('shop/product-detail', { docTitle: 'Product Detail', product: product, path: '/products' });
     });
 };
