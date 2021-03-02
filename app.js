@@ -6,7 +6,7 @@ require('dotenv').config()
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const error = require('./controllers/error');
-const mongoConnect = require('./util/database');
+const { mongoConnect } = require('./util/database');
 const app = express();
 
 app.set('view engine', 'ejs');
