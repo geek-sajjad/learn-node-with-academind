@@ -1,10 +1,8 @@
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 
-const uri = '';
-
 const mongoConnect = (callback) => {
-    MongoClient.connect(uri, {
+    MongoClient.connect(process.env.MONGO_DB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
