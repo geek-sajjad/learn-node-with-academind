@@ -1,29 +1,10 @@
-const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient;
+const mysql = require('mysql2');
 
-const _db;
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'academind',
+    password: process.env.MYSQL_PASSWORD
+});
 
-const mongoConnect = (callback) => {
-    MongoClient.connect(process.env.MONGO_DB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        })
-        .then(client => {
-            console.log('Connected to mongodb atlas successfully');
-            _db = client.db();
-            callback();
-        }).catch(err => {
-            console.log(err);
-            throw err;
-        });
-}
-
-const getDb = () => {
-    if (_db) {
-        return _db;
-    }
-    throw "Error - No database found.";
-}
-
-exports.mongoConnect = mongoConnect;
-exports.getDb = getDb;
+module.exports = pool.promise();
