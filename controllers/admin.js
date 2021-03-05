@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-    Product.findAll().then(products => {
+    req.user.getProducts().then(products => {
         res.render('admin/products', { docTitle: 'Admin | Products', path: '/admin/products', prods: products });
     }).catch(err => console.log(err));
 };
@@ -16,7 +16,7 @@ exports.postAddProduct = (req, res, next) => {
     const description = req.body.description;
     const imageUrl = req.body.imageUrl;
 
-    Product.create({
+    req.user.createProduct({
         title,
         price,
         description,
@@ -31,8 +31,10 @@ exports.postAddProduct = (req, res, next) => {
 exports.getEdiProduct = (req, res, next) => {
     const editingMode = req.query.editing
     const prodId = req.params.productId;
-    Product.findByPk(prodId)
-        .then(product => {
+    req.user.getProducts({ where: { id: prodId } })
+
+    .then(products => {
+            const product = products[0];
             if (!product) {
                 res.redirect('/');
             }
@@ -52,8 +54,9 @@ exports.postEdiProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedDescription = req.body.description;
     const updatedImageUrl = req.body.imageUrl;
-    Product.findByPk(prodId)
-        .then(product => {
+    req.user.getProducts({ where: { id: prodId } })
+        .then(products => {
+            const product = products[0];
             product.title = updatedTitle;
             product.imageUrl = updatedImageUrl;
             product.description = updatedDescription;
@@ -70,10 +73,12 @@ exports.postEdiProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findByPk(prodId)
-        .then(product => {
-            return product.destroy();
-        }).then(result => {
-            res.redirect('/admin/products');
-        }).catch(e => console.log(e));
+    req.user.getProducts({ where: { id: prodId } })
+
+    .then(products => {
+        const product = products[0];
+        return product.destroy();
+    }).then(result => {
+        res.redirect('/admin/products');
+    }).catch(e => console.log(e));
 };
