@@ -33,17 +33,12 @@ class Product {
         return db.collection('products').deleteOne({ _id: new mongodb.ObjectID(id) });
     }
 
-    static updateProduct(id, { title, price, description, imageUrl }) {
+    static updateProduct(id, title, price, description, imageUrl) {
         const db = getDb();
-        return db.collection('products').updateOne({ _id: (id) }, {
-            $set: {
-
-                "title": title,
-                "price": price,
-                "description": description,
-                "imageUrl": imageUrl
-            },
-        });
+        const query = { _id: new mongodb.ObjectID(id) };
+        return db.collection('products').updateOne(query, {
+            $set: { price, title, description, imageUrl }
+        })
     }
 }
 
