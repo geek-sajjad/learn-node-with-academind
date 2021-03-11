@@ -1,97 +1,56 @@
-const { getDb } = require('../util/database');
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 
-class User {
-    constructor(username, email, cart, id) {
-        this.name = username;
-        this.email = email;
-        this.cart = cart;
-        this._id = id;
+const Schema = mongoose.Schema;
+
+const userScheam = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    cart: {
+        items: [{
+            productId: { type: mongoose.Types.ObjectId, required: true, ref: 'Product' },
+            qty: { type: Number, required: true }
+        }]
     }
+});
 
-    save() {
-        const db = getDb();
-        return db.collection('users').insertOne(this);
-    }
+userScheam.methods.addToCart = function(product) {
+    const cartProductIndex = this.cart.items.findIndex(cp => {
+        return cp.productId.toString() === product._id.toString();
+    });
+    let updatedCart = {
+        ...this.cart
+    };
 
-    static findById(userId) {
-        const db = getDb();
-        return db.collection('users').findOne({ _id: new mongodb.ObjectID(userId) });
-    }
-
-    addToCart(product) {
-        const db = getDb();
-        const cartProductIndex = this.cart.items.findIndex(cp => {
-            return cp.productId.toString() === product._id.toString();
-        });
-        let updatedCart = {
-            ...this.cart
-        };
-
-        if (cartProductIndex >= 0) {
-            updatedCart.items[cartProductIndex].qty++;
-        } else {
-            updatedCart.items.push({
-                productId: new mongodb.ObjectID(product._id),
-                qty: 1
-            });
-        }
-
-        return db.collection('users').updateOne({ _id: new mongodb.ObjectID(this._id) }, {
-            $set: { cart: updatedCart }
+    if (cartProductIndex >= 0) {
+        updatedCart.items[cartProductIndex].qty++;
+    } else {
+        updatedCart.items.push({
+            productId: product._id,
+            qty: 1
         });
     }
+    this.cart = updatedCart;
+    return this.save();
 
-    getCart() {
-        const cartProductIds = this.cart.items.map(p => {
-            return p.productId;
-        })
-        const db = getDb();
-        return db.collection('products').find({ _id: { $in: cartProductIds } }).toArray().then(products => {
-            return products.map(p => {
-                return {...p, qty: this.cart.items.find(i => i.productId.toString() === p._id.toString()).qty };
-            })
-        });
-    }
-
-    deleteItemFromCart(productId) {
-        const db = getDb();
-        const updatedCartItems = this.cart.items.filter(i => {
-            return i.productId.toString() !== productId.toString();
-        });
-        return db.collection('users').updateOne({ _id: new mongodb.ObjectID(this._id) }, {
-            $set: { cart: { items: updatedCartItems } }
-        });
-    }
-
-    addOrder() {
-        const db = getDb();
-        return this.getCart()
-            .then(products => {
-                const order = {
-                    items: products,
-                    user: {
-                        _id: new mongodb.ObjectId(this._id),
-                        name: this.name
-                    }
-                };
-                return db.collection('orders').insertOne(order);
-            })
-            .then(result => {
-                this.cart = { items: [] };
-                return db
-                    .collection('users')
-                    .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: { items: [] } } });
-            });
-    }
-
-    getOrders() {
-        const db = getDb();
-        return db
-            .collection('orders')
-            .find({ 'user._id': new mongodb.ObjectId(this._id) })
-            .toArray();
-    }
 }
 
-module.exports = User;
+userScheam.methods.removeFromCart = function(productId) {
+    const updatedCartItems = this.cart.items.filter(i => {
+        return i.productId.toString() !== productId.toString();
+    });
+    this.cart.items = updatedCartItems;
+    return this.save();
+}
+
+userScheam.methods.clearCart = function() {
+    this.cart = { items: [] };
+    return this.save();
+}
+
+module.exports = mongoose.model('User', userScheam);
