@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const atuhRoutes = require('./routes/auth');
 const error = require('./controllers/error');
 const User = require('./models/user');
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(atuhRoutes);
 app.use(error.get404);
 mongoose.connect(process.env.MONGO_DB_URI, {
     useNewUrlParser: true,
