@@ -19,12 +19,6 @@ const store = MongoDBStore({
 
 app.set('view engine', 'ejs');
 
-// app.use((req, res, next) => {
-//     User.findById('604a3a095ea61b102d78b3fc').then(user => {
-//         req.user = user;
-//         next();
-//     }).catch(e => console.log(e));
-// });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
