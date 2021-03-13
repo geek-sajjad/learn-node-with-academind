@@ -2,12 +2,12 @@ const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
     Product.find().then(products => {
-        res.render('admin/products', { docTitle: 'Admin | Products', path: '/admin/products', prods: products });
+        res.render('admin/products', { docTitle: 'Admin | Products', path: '/admin/products', prods: products, isAuthenticated: req.session.isLoggedIn });
     }).catch(e => console.log(e));
 };
 
 exports.getAddProduct = (req, res, next) => {
-    res.render('admin/edit-product', { docTitle: 'Admin | Add Product', editingMode: false, path: '/admin/add-product' });
+    res.render('admin/edit-product', { docTitle: 'Admin | Add Product', editingMode: false, path: '/admin/add-product', isAuthenticated: req.session.isLoggedIn });
 };
 
 exports.postAddProduct = (req, res, next) => {
@@ -45,7 +45,8 @@ exports.getEdiProduct = (req, res, next) => {
             docTitle: 'Admin | Edit Product',
             product,
             path: '/admin/edit-product',
-            editingMode
+            editingMode,
+            isAuthenticated: req.session.isLoggedIn
         });
     }).catch(e => console.log(e));
 };
