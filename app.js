@@ -19,7 +19,9 @@ const store = MongoDBStore({
 
 app.set('view engine', 'ejs');
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+    extended: false
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: 'IKyhqgxKmT',
@@ -49,15 +51,5 @@ mongoose.connect(process.env.MONGO_DB_URI, {
     useFindAndModify: false,
     useCreateIndex: true
 }).then(result => {
-    User.findOne().then(user => {
-        if (!user) {
-            const user = new User({
-                name: 'sajad',
-                email: 'sajad@me.com',
-                cart: []
-            });
-            user.save();
-        }
-    });
     app.listen(3000);
 }).catch(e => console.log(e));
