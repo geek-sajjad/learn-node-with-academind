@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const mongoose = require('mongoose');
+const csrf = require('csurf');
 require('dotenv').config()
 
 const adminRoutes = require('./routes/admin');
@@ -16,6 +17,7 @@ const store = MongoDBStore({
     uri: process.env.MONGO_DB_URI,
     collection: 'sessions'
 });
+const scrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 
@@ -29,6 +31,7 @@ app.use(session({
     saveUninitialized: false,
     store: store,
 }));
+app.use(scrfProtection);
 
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -39,6 +42,12 @@ app.use((req, res, next) => {
             req.user = user;
             next();
         }).catch(e => console.log(e));
+});
+
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    next();
 });
 
 app.use('/admin', adminRoutes);

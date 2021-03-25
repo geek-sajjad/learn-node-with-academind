@@ -4,14 +4,27 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
     products: [{
-            product: { type: Object, required: true },
-            qty: { type: Number, required: true }
+            product: {
+                type: Object,
+                required: true
+            },
+            qty: {
+                type: Number,
+                required: true
+            }
         }
 
     ],
     user: {
-        name: { type: String, required: true },
-        userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true }
+        email: {
+            type: String,
+            required: true
+        },
+        userId: {
+            type: mongoose.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }
     }
 });
 
