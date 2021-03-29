@@ -16,7 +16,12 @@ exports.getLogin = (req, res, next) => {
         docTitle: 'login',
         path: '/login',
         isAuthenticated: req.session.isLoggedIn,
-        errorMessage: message
+        errorMessage: message,
+        validationErrors: [],
+        oldInput: {
+            email: '',
+            password: ''
+        }
     });
 }
 
@@ -27,7 +32,12 @@ exports.postLogIn = (req, res, next) => {
             docTitle: 'login',
             path: '/login',
             isAuthenticated: req.session.isLoggedIn,
-            errorMessage: errors.array()[0].msg
+            errorMessage: errors.array()[0].msg,
+            validationErrors: [],
+            oldInput: {
+                email: req.body.email,
+                password: req.body.password
+            }
         });
     }
     const email = req.body.email;
@@ -36,8 +46,17 @@ exports.postLogIn = (req, res, next) => {
             email: email
         }).then(user => {
             if (!user) {
-                req.flash('error', 'email or password is invalid');
-                return res.redirect('/login');
+                return res.render('auth/login', {
+                    docTitle: 'login',
+                    path: '/login',
+                    isAuthenticated: req.session.isLoggedIn,
+                    errorMessage: 'email or password is invalid',
+                    validationErrors: [],
+                    oldInput: {
+                        email: req.body.email,
+                        password: req.body.password
+                    }
+                });
             }
             bcrypt.compare(password, user.password).then(doMatch => {
                 if (doMatch) {
@@ -47,8 +66,17 @@ exports.postLogIn = (req, res, next) => {
                         res.redirect('/');
                     });
                 } else {
-                    req.flash('error', 'email or password is invalid');
-                    res.redirect('/login');
+                    return res.render('auth/login', {
+                        docTitle: 'login',
+                        path: '/login',
+                        isAuthenticated: req.session.isLoggedIn,
+                        errorMessage: 'email or password is invalid',
+                        validationErrors: [],
+                        oldInput: {
+                            email: req.body.email,
+                            password: req.body.password
+                        }
+                    });
                 }
             }).catch(e => console.log(e));
         })
@@ -75,19 +103,30 @@ exports.getSignup = (req, res, next) => {
         docTitle: 'signup',
         path: '/signup',
         isAuthenticated: false,
-        errorMessage: message
+        errorMessage: message,
+        oldInput: {
+            password: '',
+            confirmPassword: '',
+            email: ''
+        },
+        validationErrors: []
     });
 }
 
 exports.postSignup = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors.array());
         return res.status(402).render('auth/signup', {
             docTitle: 'signup',
             path: '/signup',
             isAuthenticated: false,
-            errorMessage: errors.array()[0].msg
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                password: req.body.password,
+                confirmPassword: req.body.confirmPassword,
+                email: req.body.email
+            },
+            validationErrors: errors.array(),
         });
     }
     const email = req.body.email;
