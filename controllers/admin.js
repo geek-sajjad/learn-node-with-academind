@@ -10,7 +10,10 @@ exports.getProducts = (req, res, next) => {
             prods: products,
             isAuthenticated: req.session.isLoggedIn
         });
-    }).catch(e => console.log(e));
+    }).catch(e => {
+        const error = new Error(e);
+        next(error);
+    });
 };
 
 exports.getAddProduct = (req, res, next) => {
@@ -39,7 +42,10 @@ exports.postAddProduct = (req, res, next) => {
         .then(result => {
             res.redirect('/');
         })
-        .catch(e => console.log(e));
+        .catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 }
 
 exports.getEdiProduct = (req, res, next) => {
@@ -60,7 +66,10 @@ exports.getEdiProduct = (req, res, next) => {
             editingMode,
             isAuthenticated: req.session.isLoggedIn
         });
-    }).catch(e => console.log(e));
+    }).catch(e => {
+        const error = new Error(e);
+        next(error);
+    });
 };
 
 exports.postEdiProduct = (req, res, next) => {
@@ -82,7 +91,10 @@ exports.postEdiProduct = (req, res, next) => {
                 res.redirect('/admin/products');
             });
         })
-        .catch(e => console.log(e));
+        .catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -92,5 +104,8 @@ exports.postDeleteProduct = (req, res, next) => {
         userId: req.user._id
     }).then(result => {
         res.redirect('/admin/products');
-    }).catch(e => console.log(e));
+    }).catch(e => {
+        const error = new Error(e);
+        next(error);
+    });
 };

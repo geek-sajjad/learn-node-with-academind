@@ -36,26 +36,35 @@ app.use(scrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-    if (!req.session.user) {
-        return next();
-    }
-    User.findById(req.session.user._id)
-        .then(user => {
-            req.user = user;
-            next();
-        }).catch(e => console.log(e));
-});
-
-app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     res.locals.isAuthenticated = req.session.isLoggedIn;
     next();
 });
 
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+        .then(user => {
+            if (!user) {
+                req.session.destroy();
+                return next();
+            }
+            req.user = user;
+            next();
+        }).catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
+});
+
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(atuhRoutes);
 app.use(error.get404);
+app.use(error.get500);
 mongoose.connect(process.env.MONGO_DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -63,4 +72,7 @@ mongoose.connect(process.env.MONGO_DB_URI, {
     useCreateIndex: true
 }).then(result => {
     app.listen(3000);
-}).catch(e => console.log(e));
+}).catch(e => {
+    const error = new Error(e);
+    next(error);
+});

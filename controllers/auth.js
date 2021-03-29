@@ -86,9 +86,15 @@ exports.postLogIn = (req, res, next) => {
                         }
                     });
                 }
-            }).catch(e => console.log(e));
+            }).catch(e => {
+                const error = new Error(e);
+                next(error);
+            });
         })
-        .catch(e => console.log(e));
+        .catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 }
 
 exports.postLogOut = (req, res, next) => {
@@ -158,7 +164,10 @@ exports.postSignup = (req, res, next) => {
             // });
             res.redirect('/login');
         })
-        .catch(e => console.log(e));
+        .catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 }
 
 exports.getReset = (req, res, next) => {
@@ -189,7 +198,8 @@ exports.postReset = (req, res, next) => {
         const token = buffer.toString('hex');
         User.findOne({
                 email: req.body.email
-            }).then(user => {
+            })
+            .then(user => {
                 if (!user) {
                     req.flash('error', 'no user found with that email');
                     return res.redirect('/reset');
@@ -197,7 +207,8 @@ exports.postReset = (req, res, next) => {
                 user.resetToken = token;
                 user.resetTokenExpiration = Date.now() + 3600000;
                 return user.save();
-            }).then(result => {
+            })
+            .then(result => {
                 transporter.sendMail({
                     to: req.body.email,
                     from: 'test@test.com',
@@ -209,7 +220,10 @@ exports.postReset = (req, res, next) => {
                 res.redirect('/reset');
 
             })
-            .catch(e => console.log(e))
+            .catch(e => {
+                const error = new Error(e);
+                next(error);
+            });
     });
 }
 
@@ -245,7 +259,10 @@ exports.getNewPassword = (req, res, next) => {
                 userId: user._id.toString(),
                 passwordToken: token
             });
-        }).catch(e => console.log(e));
+        }).catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 }
 
 exports.postNewPassword = (req, res, next) => {
@@ -277,5 +294,8 @@ exports.postNewPassword = (req, res, next) => {
         .then(result => {
             res.redirect('/login');
         })
-        .catch(e => console.log(e));
+        .catch(e => {
+            const error = new Error(e);
+            next(error);
+        });
 }
