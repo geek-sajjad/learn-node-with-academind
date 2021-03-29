@@ -8,7 +8,7 @@ const authController = require('../controllers/auth');
 
 router.get('/login', authController.getLogin);
 router.post('/login', [
-    check('email', 'Please enter a valid email.').isEmail(),
+    check('email', 'Please enter a valid email.').isEmail().normalizeEmail(),
     check('password', 'Please enter password at least 5 charachter and alpahnumric').isLength({
         min: 5
     }).isAlphanumeric()
@@ -26,7 +26,7 @@ router.post('/signup', [
                 return Promise.reject('email is already exsist - please pick one that not exsist');
             }
         })
-    }),
+    }).normalizeEmail(),
     check('password', 'Please enter password at least 5 charachter and alpahnumric')
     .isLength({
         min: 5
@@ -42,5 +42,13 @@ router.post('/signup', [
     })
 ], authController.postSignup);
 router.post('/logout', authController.postLogOut);
+
+router.get('/reset', authController.getReset);
+
+router.post('/reset', authController.postReset);
+
+router.get('/reset/:token', authController.getNewPassword);
+
+router.post('/new-password', authController.postNewPassword);
 
 module.exports = router;
